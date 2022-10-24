@@ -10,7 +10,7 @@ void sendMQTTMsg()
     if(machineOn && newMachineInput)
     {
       mqttMsgCycle = MQTT_WOKRING_CYCLE;
-      parseMachineData();
+      
   
       client.publish(will_topic, "online", true);
       client.publish(online_topic, String(machineOn).c_str(), true);
@@ -23,7 +23,7 @@ void sendMQTTMsg()
       
       newMachineInput = false;
     }
-    else
+    else if(!machineOn)
     {
       mqttMsgCycle = MQTT_DEFAULT_CYCLE;
       client.publish(will_topic, "online", true);

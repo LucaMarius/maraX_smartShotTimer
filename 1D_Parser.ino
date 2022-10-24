@@ -1,5 +1,6 @@
 void getMachineInput() {
   while (mySerial.available() ) {
+    
     serialUpdateMillis = millis();
     rc = mySerial.read();
 
@@ -13,17 +14,20 @@ void getMachineInput() {
       receivedChars[ndx] = '\0';
       ndx = 0;
       
-      newMachineInput = true;
       machineOn = true;
+      parseMachineData();
 
-      
+      if(DEBUG)
+      {
+        Serial.print("\nreceived data: "); 
+        Serial.print(receivedChars);
+      }
     }
   }
 
-  if (millis() - serialUpdateMillis > 5000) {
+  if (millis() - serialUpdateMillis > SERIAL_TIMEOUT) //Serial timeout
+  {
     serialUpdateMillis = millis();
-    memset(receivedChars, 0, numChars );
-    mySerial.write(0x11); // request serial update
     machineOn = false;
   }
 }
@@ -31,26 +35,38 @@ void getMachineInput() {
 void parseMachineData()
 {
   char * strtokIndex;
-
   char tempChars[numChars];
+
   strcpy(tempChars,receivedChars);
-
   
-  strtokIndex = strtok(tempChars, ",");
-  strcpy(swVer, strtokIndex); 
+  //check if received data start with mode "C" (Coffee) or "V" (Vapour)
+  if(strlen(tempChars) == MARAX_DATA_STRLEN && (tempChars[0] == 'C' || tempChars[0] == 'V'))
+  {
+    
+    strtokIndex = strtok(tempChars, ",");
 
-  strtokIndex = strtok(NULL, ",");
-  strcpy(actSteamTemp, strtokIndex); 
+    while(strtokIndex != NULL)
+    {
+      strcpy(swVer, strtokIndex); 
 
-  strtokIndex = strtok(NULL, ",");
-  strcpy(tarSteamTemp, strtokIndex);
+      strtokIndex = strtok(NULL, ",");
+      strcpy(actSteamTemp, strtokIndex); 
 
-  strtokIndex = strtok(NULL, ",");
-  strcpy(actHeatExcTemp, strtokIndex); 
+      strtokIndex = strtok(NULL, ",");
+      strcpy(tarSteamTemp, strtokIndex);
 
-  strtokIndex = strtok(NULL, ",");
-  strcpy(boostHeatTime, strtokIndex); 
+      strtokIndex = strtok(NULL, ",");
+      strcpy(actHeatExcTemp, strtokIndex); 
 
-  strtokIndex = strtok(NULL, ",");
-  strcpy(heatElem, strtokIndex);
+      strtokIndex = strtok(NULL, ",");
+      strcpy(boostHeatTime, strtokIndex); 
+
+      strtokIndex = strtok(NULL, ",");
+      strcpy(heatElem, strtokIndex);
+
+      strtokIndex = strtok(NULL, ","); //should return NULL
+    }
+
+    newMachineInput = true;
+  }
 }

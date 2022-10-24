@@ -67,13 +67,20 @@ void setup() {
   mySerial.write(0x11);
 }
 
+uint32_t startTimet = 0;
 
 void loop() {
   t.update();
   
   detectPumpChanges();
   detectButtonChanges();
-  getMachineInput();
+
+  if(millis()-startTimet >= 1000)
+  {
+    getMachineInput();
+    startTimet = millis();
+  }
+  
 
   if(ONLINEMODE)
   {

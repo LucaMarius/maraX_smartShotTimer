@@ -96,6 +96,8 @@ bool pbStore = false;
 
 
 // ----- Parsed Machine Data / Serial -------------------------------------
+#define SERIAL_TIMEOUT 5000 //in m sec
+#define MARAX_DATA_STRLEN 25
 const byte numChars = 32;
 char receivedChars[numChars];
 bool newMachineInput = false;
