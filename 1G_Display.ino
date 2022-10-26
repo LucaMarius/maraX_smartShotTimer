@@ -45,7 +45,7 @@ void updateDisplay() {
       display.setCursor(display.width() / 2 - 1 + 17, 20);
       display.print(EEPROM.read(SHOTTIME_ADDR));
       // draw machine state C/S
-      if (receivedChars[0] ) {
+      if (receivedChars[0]) {
         display.setTextSize(2);
         display.setCursor(1, 1);
         if (String(receivedChars[0]) == "C") {
@@ -56,51 +56,64 @@ void updateDisplay() {
           display.print("X");
         }
       }
-      if (String(receivedChars).substring(18, 22) == "0000") {
+      if (!strcmp(boostHeatTime, "0000")) 
+      {
         // not in boost heating mode
         // draw fill circle if heating on
-        if (String(receivedChars[23]) == "1") {
+        if (heatElem) 
+        {
           display.fillCircle(45, 7, 6, SSD1306_WHITE);
         }
         // draw empty circle if heating off
-        if (String(receivedChars[23]) == "0") {
+        else
+        {
           display.drawCircle(45, 7, 6, SSD1306_WHITE);
         }
-      } else {
+      } 
+      else 
+      {
         // in boost heating mode
         // draw fill rectangle if heating on
-        if (String(receivedChars[23]) == "1") {
+        if (heatElem) 
+        {
           display.fillRect(39, 1, 12, 12, SSD1306_WHITE);
         }
         // draw empty rectangle if heating off
-        if (String(receivedChars[23]) == "0") {
+        else
+        {
           display.drawRect(39, 1, 12, 12, SSD1306_WHITE);
         }
       }
       // draw temperature
-      if (receivedChars[14] && receivedChars[15] && receivedChars[16]) {
-        display.setTextSize(3);
-        display.setCursor(1, 20);
-        if (String(receivedChars[14]) != "0") {
-          display.print(String(receivedChars[14]));
+      if (1)//receivedChars[14] && receivedChars[15] && receivedChars[16]) 
+      {
+        if (String(actHeatExcTemp[0]) != "0") {
+          display.setTextSize(2);
+          display.setCursor(1, 25);
+          display.print(String(actHeatExcTemp[0]));
         }
-        display.print(String(receivedChars[15]));
-        display.print(String(receivedChars[16]));
-        display.print((char)247);
-        if (String(receivedChars[14]) == "0") {
-          display.print("C");
+        else
+        {
+          display.setTextSize(3);
+          display.setCursor(1, 20);
         }
+        display.print(String(actHeatExcTemp[1]));
+        display.print(String(actHeatExcTemp[2]));
+        display.print((char)247); //prints °
+        display.print("C");
       }
       // draw steam temperature
-      if (receivedChars[6] && receivedChars[7] && receivedChars[8]) {
+      if (1) //receivedChars[6] && receivedChars[7] && receivedChars[8]) 
+      {
         display.setTextSize(2);
         display.setCursor(1, 48);
-        if (String(receivedChars[6]) != "0") {
-          display.print(String(receivedChars[6]));
+        if (String(actSteamTemp[0]) != "0") 
+        {
+          display.print(String(actSteamTemp[0]));
         }
-        display.print(String(receivedChars[7]));
-        display.print(String(receivedChars[8]));
-        display.print((char)247);
+        display.print(String(actSteamTemp[1]));
+        display.print(String(actSteamTemp[2]));
+        display.print((char)247); //prints °
         display.print("C");
       }
     }
