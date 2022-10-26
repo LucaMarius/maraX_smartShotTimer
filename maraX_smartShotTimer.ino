@@ -110,7 +110,6 @@ char actSteamTemp[8]= {"000"};
 char tarSteamTemp[8]= {"000"};
 char actHeatExcTemp[8]= {"000"}; 
 char boostHeatTime[8]= {"0000"};
-//char heatElem[8]= {"0"};
 bool heatElem = false;
 bool machineOn = false;
 
