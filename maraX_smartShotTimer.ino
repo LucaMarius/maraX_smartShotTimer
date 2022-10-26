@@ -106,11 +106,11 @@ char endMarker = '\n';
 char rc;
 
 char swVer[8] = {'0','.', '0', '0'}; 
-char actSteamTemp[8]= {"0"}; 
-char tarSteamTemp[8]= {"0"};
-char actHeatExcTemp[8]= {"0"}; 
-char boostHeatTime[8]= {"0"};
-char heatElem[8]= {"0"};
+char actSteamTemp[8]= {"000"}; 
+char tarSteamTemp[8]= {"000"};
+char actHeatExcTemp[8]= {"000"}; 
+char boostHeatTime[8]= {"0000"};
+bool heatElem = false;
 bool machineOn = false;
 
 #define D5 (14)

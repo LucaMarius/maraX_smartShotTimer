@@ -19,7 +19,7 @@ void getMachineInput() {
 
       if(DEBUG)
       {
-        Serial.print("\nreceived data: "); 
+        Serial.print("\nReceived data: "); 
         Serial.print(receivedChars);
       }
     }
@@ -62,11 +62,32 @@ void parseMachineData()
       strcpy(boostHeatTime, strtokIndex); 
 
       strtokIndex = strtok(NULL, ",");
-      strcpy(heatElem, strtokIndex);
+
+      if(!strncmp(strtokIndex, "1", 1))
+      {
+        heatElem = true;
+      }
+      else heatElem = false;
 
       strtokIndex = strtok(NULL, ","); //should return NULL
     }
 
     newMachineInput = true;
+
+    if(DEBUG)
+    {
+      Serial.print("\nParsed data:   ");
+      Serial.print(swVer);
+      Serial.print(",");
+      Serial.print(actSteamTemp);
+      Serial.print(",");
+      Serial.print(tarSteamTemp);
+      Serial.print(",");
+      Serial.print(actHeatExcTemp);
+      Serial.print(",");
+      Serial.print(boostHeatTime);
+      Serial.print(",");
+      Serial.print(heatElem);
+    }
   }
 }
