@@ -13,7 +13,7 @@ void sendMQTTMsg()
       
   
       client.publish(will_topic, "online", true);
-      client.publish(online_topic, String(machineOn).c_str(), true);
+      client.publish(online_topic, "on", true);
       client.publish(sw_topic, String(swVer).c_str(), true);
       client.publish(actSteam_topic, String(actSteamTemp).c_str(), true);
       client.publish(tarSteam_topic, String(tarSteamTemp).c_str(), true);
@@ -27,7 +27,7 @@ void sendMQTTMsg()
     {
       mqttMsgCycle = MQTT_DEFAULT_CYCLE;
       client.publish(will_topic, "online", true);
-      client.publish(online_topic, String(machineOn).c_str(), true);
+      client.publish(online_topic, "off", true);
       client.publish(actSteam_topic, "---", true);
       client.publish(tarSteam_topic, "---", true);
       client.publish(actHeatExc_topic, "---", true);
