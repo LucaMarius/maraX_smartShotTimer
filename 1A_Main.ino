@@ -62,7 +62,7 @@ void setup() {
   display.display();
 
   displayMode(ONLINEMODE);
-  t.every(100, updateDisplay);
+  t.every(100, displayHandler);
   
   mySerial.write(0x11);
 }

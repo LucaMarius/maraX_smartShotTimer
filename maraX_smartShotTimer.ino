@@ -27,10 +27,12 @@
 
 
 // ----- User Defines and Credentials --------------------------------------
-#define MQTT_DEFAULT_CYCLE 5000
-#define MQTT_WOKRING_CYCLE 500
+#define MQTT_DEFAULT_CYCLE 5000 //ms
+#define MQTT_WOKRING_CYCLE 500 //ms
+#define SLEEPTIME 10000 // ms, shutdown display time = serial timeout + sleeptime 
+                        // flag raised after no pump changes and machine off (also see serial timeout)
 
-#define DEBUG true
+#define DEBUG false
 
 // ----- check defines ----------------------------------------------------
 #if defined(ssid) && defined (wpa2) 
@@ -105,6 +107,8 @@ static byte ndx = 0;
 char endMarker = '\n';
 char rc;
 
+char firstToken[8] = {'C','0','.', '0', '0'};
+char priorityMode;
 char swVer[8] = {'0','.', '0', '0'}; 
 char actSteamTemp[8]= {"000"}; 
 char tarSteamTemp[8]= {"000"};
@@ -120,12 +124,28 @@ SoftwareSerial mySerial(D5, D6);
 
 // ----- WIFI ----------------------------------------------------------------
 WiFiClient espClient; 
-uint8_t wifiInitCnt = 0;
 #define WIFI_MAX_INITCNT 10
+#define WIFI_MAX_CONNECTCNT 100
+#define RSSI_SAMPLECNT 10
 
 uint32_t wifiReconnectDelay[] = {100, 500, 1000, 5000, 10000, 30000, 60000, 300000};
 uint32_t prevWifiConnectTime = 0; 
+uint8_t wifiInitCnt = 0;
+uint8_t wifiConnectCnt = 0;
 uint8_t wifiReconnectCnt = 0; 
+int rssi = 0;
+int rssiAv = 0;
+uint8_t rssiCnt = 0;
+uint32_t lastWifiTime;
+
+enum rssi
+{
+  UNAVAILABLE, 
+  BAD, 
+  GOOD, 
+  STRONG
+}wifi_rssi=UNAVAILABLE;
+
 
 
 // ----- MQTT ----------------------------------------------------------------

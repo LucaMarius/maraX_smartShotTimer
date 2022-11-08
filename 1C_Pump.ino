@@ -48,7 +48,7 @@ void detectPumpChanges()
     timerStopMillis = 0;
   }
   
-  if (!timerStarted && displayOn && timerDisplayOffMillis >= 0 && (millis() - timerDisplayOffMillis > 1000 * 60 * 60)) {
+  if (!machineOn && !timerStarted && displayOn && timerDisplayOffMillis >= 0 && (millis() - timerDisplayOffMillis > SLEEPTIME)) {
     timerDisplayOffMillis = 0;
     timerCount = 0;
     prevTimerCount = 0;

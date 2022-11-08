@@ -1,7 +1,7 @@
 void getMachineInput() {
   while (mySerial.available() ) {
     
-    serialUpdateMillis = millis();
+    
     rc = mySerial.read();
 
     if (rc != endMarker) {
@@ -14,7 +14,6 @@ void getMachineInput() {
       receivedChars[ndx] = '\0';
       ndx = 0;
       
-      machineOn = true;
       parseMachineData();
 
       if(DEBUG)
@@ -25,10 +24,11 @@ void getMachineInput() {
     }
   }
 
-  if (millis() - serialUpdateMillis > SERIAL_TIMEOUT) //Serial timeout
+  if (machineOn && (millis() - serialUpdateMillis > SERIAL_TIMEOUT)) //Serial timeout
   {
     serialUpdateMillis = millis();
     machineOn = false;
+    timerDisplayOffMillis = millis();
   }
 }
 
@@ -42,12 +42,19 @@ void parseMachineData()
   //check if received data start with mode "C" (Coffee) or "V" (Vapour)
   if(strlen(tempChars) == MARAX_DATA_STRLEN && (tempChars[0] == 'C' || tempChars[0] == 'V'))
   {
+    serialUpdateMillis = millis();
+    newMachineInput = true;
+    machineOn = true;
+    displayOn = true;
     
     strtokIndex = strtok(tempChars, ",");
 
     while(strtokIndex != NULL)
     {
-      strcpy(swVer, strtokIndex); 
+      strcpy(firstToken, strtokIndex); //store first token which contains priority mode and sw version
+
+      priorityMode = firstToken[0]; 
+      strncpy(swVer, strtokIndex+1, 4);
 
       strtokIndex = strtok(NULL, ",");
       strcpy(actSteamTemp, strtokIndex); 
@@ -72,11 +79,11 @@ void parseMachineData()
       strtokIndex = strtok(NULL, ","); //should return NULL
     }
 
-    newMachineInput = true;
-
     if(DEBUG)
     {
       Serial.print("\nParsed data:   ");
+      Serial.print(priorityMode);
+      Serial.print("");
       Serial.print(swVer);
       Serial.print(",");
       Serial.print(actSteamTemp);
