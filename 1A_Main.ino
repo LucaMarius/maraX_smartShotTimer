@@ -75,7 +75,7 @@ void loop() {
   detectPumpChanges();
   detectButtonChanges();
 
-  if(millis()-startTimet >= 1000)
+  if(millis()-startTimet >= 500)
   {
     getMachineInput();
     startTimet = millis();
