@@ -72,6 +72,7 @@ long timerDisplayOffMillis = 0;
 long serialUpdateMillis = 0;
 
 Timer t;
+Timer t2;
 
 
 // ----- EEPROM and ShotTime ----------------------------------------------
@@ -102,6 +103,7 @@ bool pbStore = false;
 #define MARAX_DATA_STRLEN 25
 const byte numChars = 32;
 char receivedChars[numChars];
+char field[6][8];
 bool newMachineInput = false;
 static byte ndx = 0;
 char endMarker = '\n';
