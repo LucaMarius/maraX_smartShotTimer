@@ -47,36 +47,35 @@ void parseMachineData()
     machineOn = true;
     displayOn = true;
     
+    uint8_t fieldCnt = 0;
+    uint8_t maxFieldCnt = 5;
     strtokIndex = strtok(tempChars, ",");
 
-    while(strtokIndex != NULL)
+    while(strtokIndex != NULL && fieldCnt<=maxFieldCnt)
     {
-      strcpy(firstToken, strtokIndex); //store first token which contains priority mode and sw version
+      strcpy(field[fieldCnt], strtokIndex);
+      strtokIndex = strtok(NULL, ",");
 
+      fieldCnt++;
+    }
+
+    if(fieldCnt == 6)
+    {
+      strcpy(firstToken, field[0]); //store first token which contains priority mode and sw version
       priorityMode = firstToken[0]; 
-      strncpy(swVer, strtokIndex+1, 4);
+      strncpy(swVer, &firstToken[0]+1, 4);
 
-      strtokIndex = strtok(NULL, ",");
-      strcpy(actSteamTemp, strtokIndex); 
+      strcpy(actSteamTemp, field[1]); 
+      strcpy(tarSteamTemp, field[2]);
+      strcpy(actHeatExcTemp, field[3]); 
+      strcpy(boostHeatTime, field[4]); 
 
-      strtokIndex = strtok(NULL, ",");
-      strcpy(tarSteamTemp, strtokIndex);
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(actHeatExcTemp, strtokIndex); 
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(boostHeatTime, strtokIndex); 
-
-      strtokIndex = strtok(NULL, ",");
-
-      if(!strncmp(strtokIndex, "1", 1))
+      if(!strncmp(field[5], "1", 1))
       {
         heatElem = true;
       }
       else heatElem = false;
 
-      strtokIndex = strtok(NULL, ","); //should return NULL
     }
 
     if(DEBUG)
