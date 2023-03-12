@@ -1,3 +1,9 @@
+void IRAM_ATTR TimerHandler()
+{
+  Serial.print("\nTest");
+}
+
+
 void setup() {
   EEPROM.begin(EEPROM_SIZE);
   EEPROM.get(SHOTTIME_ADDR, shotTime);
@@ -65,11 +71,15 @@ void setup() {
   t.every(100, displayHandler);
   
   mySerial.write(0x11);
+
+  // Interval in microsecs
+  ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler);
 }
 
 uint32_t startTimet = 0;
 
-void loop() {
+void loop() 
+{
   t.update();
   
   detectPumpChanges();
@@ -90,5 +100,6 @@ void loop() {
       sendMQTTMsg(); 
     } 
   }
+  
 
 }

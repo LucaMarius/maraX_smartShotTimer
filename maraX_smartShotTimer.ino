@@ -20,6 +20,7 @@
 #include <ESP8266WiFi.h>
 #include <Wire.h>
 #include <Timer.h>
+#include <ESP8266TimerInterrupt.h>
 #include <SoftwareSerial.h>
 #include <PubSubClient.h>
 #include <EEPROM.h>
@@ -32,7 +33,7 @@
 #define SLEEPTIME 10000 // ms, shutdown display time = serial timeout + sleeptime 
                         // flag raised after no pump changes and machine off (also see serial timeout)
 
-#define DEBUG false
+#define DEBUG 1
 
 // ----- check defines ----------------------------------------------------
 #if defined(ssid) && defined (wpa2) 
@@ -73,6 +74,19 @@ long serialUpdateMillis = 0;
 
 Timer t;
 Timer t2;
+
+// Select a Timer Clock
+#define USING_TIM_DIV1 false           // for shortest and most accurate timer
+#define USING_TIM_DIV16 false           // for medium time and medium accurate timer
+#define USING_TIM_DIV256 true            // for longest timer but least accurate. Default
+
+// Init ESP8266 only and only Timer 1
+ESP8266Timer ITimer;
+
+#define TIMER_INTERVAL_MS        1000
+
+
+
 
 
 // ----- EEPROM and ShotTime ----------------------------------------------
