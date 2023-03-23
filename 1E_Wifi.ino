@@ -2,19 +2,6 @@ void initWifi()
 {
   WiFi.begin(ssid, wpa2);
   Serial.print("\n\nTrying to connect to WiFi");
-  
-  while(WiFi.status() != WL_CONNECTED)
-  {
-    delay(100);
-    wifiInitCnt++;
-    Serial.print("."); 
-
-    if(wifiInitCnt > WIFI_MAX_INITCNT)
-    {
-      wifiInitCnt = 0;
-      break;
-    } 
-  }
 
   if(WiFi.status() == WL_CONNECTED)
   {

@@ -29,7 +29,7 @@
 
 // ----- User Defines and Credentials --------------------------------------
 #define MQTT_DEFAULT_CYCLE 5000 //ms
-#define MQTT_WOKRING_CYCLE 500 //ms
+#define MQTT_WOKRING_CYCLE 1000 //ms
 #define SLEEPTIME 10000 // ms, shutdown display time = serial timeout + sleeptime 
                         // flag raised after no pump changes and machine off (also see serial timeout)
 
@@ -73,7 +73,7 @@ long timerDisplayOffMillis = 0;
 long serialUpdateMillis = 0;
 
 Timer t;
-Timer t2;
+Timer t_wifi;
 
 // Select a Timer Clock
 #define USING_TIM_DIV1 false           // for shortest and most accurate timer
@@ -84,7 +84,7 @@ Timer t2;
 ESP8266Timer ITimer;
 
 #define TIMER_INTERVAL_MS        1000
-
+void IRAM_ATTR TimerHandler();
 
 
 

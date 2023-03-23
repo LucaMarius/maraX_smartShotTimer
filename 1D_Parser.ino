@@ -1,5 +1,5 @@
 void getMachineInput() {
-  while (mySerial.available() ) {
+  while (mySerial.available()>0) {
     
     
     rc = mySerial.read();
@@ -78,7 +78,7 @@ void parseMachineData()
 
     }
 
-    if(DEBUG)
+    if(DEBUG && false)
     {
       Serial.print("\nParsed data:   ");
       Serial.print(priorityMode);

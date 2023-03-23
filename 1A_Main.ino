@@ -1,9 +1,3 @@
-void IRAM_ATTR TimerHandler()
-{
-  Serial.print("\nTest");
-}
-
-
 void setup() {
   EEPROM.begin(EEPROM_SIZE);
   EEPROM.get(SHOTTIME_ADDR, shotTime);
@@ -73,32 +67,95 @@ void setup() {
   mySerial.write(0x11);
 
   // Interval in microsecs
-  ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler);
+  //ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler);
 }
 
-uint32_t startTimet = 0;
+uint32_t startTime = 0;
+
+uint32_t startTime_pump = 0;
+uint32_t startTime_button = 0;
+uint32_t startTime_getData = 0;
+uint32_t startTime_wifiHandler = 0;
+uint32_t startTime_mqtt = 0;
+
+int32_t time_pump = 0;
+int32_t time_button = 0;
+int32_t time_getData = 0;
+int32_t time_wifiHandler = 0;
+int32_t time_mqtt = 0;
+
+
 
 void loop() 
 {
   t.update();
   
+  startTime_pump = millis();
   detectPumpChanges();
-  detectButtonChanges();
-
-  if(millis()-startTimet >= 500)
+  time_pump = millis()-startTime_pump;
+  if(machineOn) client.publish("MaraX/Debug/pumpTime", String(time_pump).c_str(), true);
+  
+  if(time_pump >=5) 
   {
+    Serial.print("\n------Time Pump Handler: "); 
+    Serial.print(time_pump);
+  }
+
+  startTime_button = millis();
+  detectButtonChanges();
+  time_button = millis()-startTime_button;
+  if(machineOn) client.publish("MaraX/Debug/buttonTime", String(time_button).c_str(), true);
+  if(time_button >=5) 
+  {
+    Serial.print("\n------Time Button Handler: "); 
+    Serial.print(time_button);
+  }
+
+
+  if(millis()-startTime >= 500)
+  {
+    startTime_getData = millis();
     getMachineInput();
-    startTimet = millis();
+    time_getData = millis()-startTime_getData;
+    if(machineOn) client.publish("MaraX/Debug/dataTime", String(time_getData).c_str(), true);
+    if(time_getData >=5)
+    {
+      Serial.print("\n------Time Machinedata Handler: "); 
+      Serial.print(time_getData);
+    }
+
+    startTime = millis();
   }
   
 
   if(ONLINEMODE)
   {
+    startTime_wifiHandler = millis();
     wifiHandler();
+    time_wifiHandler = millis()-startTime_wifiHandler;
+    if(machineOn) client.publish("MaraX/Debug/wifiTime", String(time_wifiHandler).c_str(), true);
+    if(time_wifiHandler >= 5)
+    {
+      Serial.print("\n------Time WIFI Handler: "); 
+      Serial.print(time_wifiHandler);
+    } 
+
+
     if(WiFi.status() == WL_CONNECTED && MQTTMODE)
     {
+      startTime_mqtt = millis();
       sendMQTTMsg(); 
+      client.loop();
+      time_mqtt = millis()-startTime_mqtt;
+      if(machineOn) client.publish("MaraX/Debug/mqttTime", String(time_mqtt).c_str(), true);
+      if(time_mqtt >= 5) 
+      {
+        Serial.print("\n------Time MQTT Handler: "); 
+        Serial.print(time_mqtt);
+      }
     } 
+
+    
   }
   
 
