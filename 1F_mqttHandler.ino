@@ -37,6 +37,7 @@ void sendMQTTMsg()
 void reconnectMQTT()
 {
   Serial.print("\nAttempting MQTT connection ..."); 
+
   
   if(client.connect(CLIENT, MQTT_USER, MQTT_PASSWORD, will_topic, 0, true, "offline"))
   {

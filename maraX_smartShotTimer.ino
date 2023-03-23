@@ -19,7 +19,6 @@
 #include <Adafruit_GFX.h>
 #include <ESP8266WiFi.h>
 #include <Wire.h>
-#include <Timer.h>
 #include <ESP8266TimerInterrupt.h>
 #include <SoftwareSerial.h>
 #include <PubSubClient.h>
@@ -34,6 +33,8 @@
                         // flag raised after no pump changes and machine off (also see serial timeout)
 
 #define DEBUG 1
+#define DEBUG_WIFI 0
+#define DEBUG_PARSER 0
 
 // ----- check defines ----------------------------------------------------
 #if defined(ssid) && defined (wpa2) 
@@ -72,9 +73,6 @@ long timerStopMillis = 0;
 long timerDisplayOffMillis = 0;
 long serialUpdateMillis = 0;
 
-Timer t;
-Timer t_wifi;
-
 // Select a Timer Clock
 #define USING_TIM_DIV1 false           // for shortest and most accurate timer
 #define USING_TIM_DIV16 false           // for medium time and medium accurate timer
@@ -98,6 +96,13 @@ uint32_t shotTime = 0;
 // ----- Reed Sensor ------------------------------------------------------
 #define D7 (13)
 #define PUMP_PIN D7
+#define DEBOUNCE_TIME_REED_ON 10
+#define DEBOUNCE_TIME_REED_OFF 200
+
+bool reedContact = false;
+uint32_t reedContactTimeClosed = 0;
+uint32_t reedContactTimeOpened = 0;
+
 
 
 // ----- Push Button ------------------------------------------------------
@@ -186,3 +191,5 @@ PubSubClient client(espClient);
 Adafruit_SSD1306 display(128, 64, &Wire, -1);
 bool displayOn = true;
 char outMin[2];
+
+void displayBoostTimer();

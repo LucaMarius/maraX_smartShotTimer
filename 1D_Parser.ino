@@ -16,7 +16,7 @@ void getMachineInput() {
       
       parseMachineData();
 
-      if(DEBUG)
+      if(DEBUG_PARSER)
       {
         Serial.print("\nReceived data: "); 
         Serial.print(receivedChars);
@@ -78,7 +78,7 @@ void parseMachineData()
 
     }
 
-    if(DEBUG && false)
+    if(DEBUG_PARSER && false)
     {
       Serial.print("\nParsed data:   ");
       Serial.print(priorityMode);

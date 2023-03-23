@@ -1,9 +1,4 @@
-void displayBoostTimer();
-uint32_t startTime_displayHandler = 0;
-int32_t time_displayHandler = 0;
-
 void displayHandler() {
-  startTime_displayHandler = millis();
 
   display.clearDisplay();
   if (displayOn) 
@@ -28,14 +23,6 @@ void displayHandler() {
    } 
   }
   display.display();
-
-  time_displayHandler = millis() - startTime_displayHandler;
-  if(machineOn) client.publish("MaraX/Debug/displayTime", String(time_displayHandler).c_str(), true);
-  if(time_displayHandler >= 32) 
-  {
-    Serial.print("\n------Time Display Handler: "); 
-    Serial.print(time_displayHandler);
-  }
 }
 
 

@@ -1,20 +1,24 @@
 void initWifi()
 {
   WiFi.begin(ssid, wpa2);
-  Serial.print("\n\nTrying to connect to WiFi");
 
-  if(WiFi.status() == WL_CONNECTED)
+  if(DEBUG_WIFI)
   {
-    Serial.print("\n"); 
-    Serial.print("\n---WIFI CONNECTED---"); 
-    Serial.print("\nIPV4: "); 
-    Serial.print(WiFi.localIP());
-  }
-  else
-  {
-    Serial.print("\n"); 
-    Serial.print("\n---WIFI ");
-    Serial.print(" DISCONNECTED---");     
+    Serial.print("\n\nTrying to connect to WiFi");
+
+    if(WiFi.status() == WL_CONNECTED)
+    {
+      Serial.print("\n"); 
+      Serial.print("\n---WIFI CONNECTED---"); 
+      Serial.print("\nIPV4: "); 
+      Serial.print(WiFi.localIP());
+    }
+    else
+    {
+      Serial.print("\n"); 
+      Serial.print("\n---WIFI ");
+      Serial.print(" DISCONNECTED---");     
+    }
   }
 }
 
@@ -52,7 +56,7 @@ void wifiHandler()
         }
     }
     
-    if(DEBUG && (millis()-lastWifiTime > 5000))
+    if(DEBUG_WIFI && (millis()-lastWifiTime > 5000))
     {
       Serial.print("\n---WIFI CONNECTED---"); 
       Serial.print("\nIPV4: ");
@@ -82,12 +86,15 @@ void wifiHandler()
       wifiReconnectCnt = sizeof(wifiReconnectDelay)/sizeof(wifiReconnectDelay[0])-1;
     }
 
-    Serial.print("\nReconnect to Wifi - Cnt: ");
-    Serial.print(wifiReconnectCnt);
-    Serial.print(" - Next Timeout: ");
-    Serial.print(wifiReconnectDelay[wifiReconnectCnt]);   
-    Serial.print(" - prev Time: ");
-    Serial.print(prevWifiConnectTime); 
+    if(DEBUG_WIFI)
+    {
+      Serial.print("\nReconnect to Wifi - Cnt: ");
+      Serial.print(wifiReconnectCnt);
+      Serial.print(" - Next Timeout: ");
+      Serial.print(wifiReconnectDelay[wifiReconnectCnt]);   
+      Serial.print(" - prev Time: ");
+      Serial.print(prevWifiConnectTime); 
+    }
   } 
 }
 
