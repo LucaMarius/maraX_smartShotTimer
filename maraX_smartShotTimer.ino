@@ -96,8 +96,8 @@ uint32_t shotTime = 0;
 // ----- Reed Sensor ------------------------------------------------------
 #define D7 (13)
 #define PUMP_PIN D7
-#define DEBOUNCE_TIME_REED_ON 10
-#define DEBOUNCE_TIME_REED_OFF 200
+#define DEBOUNCE_TIME_REED_ON 0
+#define DEBOUNCE_TIME_REED_OFF 250
 
 bool reedContact = false;
 uint32_t reedContactTimeClosed = 0;
