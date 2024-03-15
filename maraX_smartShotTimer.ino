@@ -19,7 +19,7 @@
 #include <Adafruit_GFX.h>
 #include <ESP8266WiFi.h>
 #include <Wire.h>
-#include <ESP8266TimerInterrupt.h>
+//#include <ESP8266TimerInterrupt.h>
 #include <SoftwareSerial.h>
 #include <PubSubClient.h>
 #include <EEPROM.h>
@@ -79,7 +79,7 @@ long serialUpdateMillis = 0;
 #define USING_TIM_DIV256 true            // for longest timer but least accurate. Default
 
 // Init ESP8266 only and only Timer 1
-ESP8266Timer ITimer;
+//ESP8266Timer ITimer;
 
 #define TIMER_INTERVAL_MS        1000
 void IRAM_ATTR TimerHandler();
@@ -97,7 +97,7 @@ uint32_t shotTime = 0;
 #define D7 (13)
 #define PUMP_PIN D7
 #define DEBOUNCE_TIME_REED_ON 0
-#define DEBOUNCE_TIME_REED_OFF 250
+#define DEBOUNCE_TIME_REED_OFF 2000
 
 bool reedContact = false;
 uint32_t reedContactTimeClosed = 0;

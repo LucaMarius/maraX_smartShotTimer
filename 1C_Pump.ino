@@ -3,21 +3,20 @@ void detectPumpChanges()
   if (!digitalRead(PUMP_PIN) && !reedContact) { //reed contac closed
     reedContact = true;
     reedContactTimeClosed = millis();
+    
+    if(!timerStarted)
+    {
+      timerStarted = true;
+      timerStartMillis = millis();
+      displayOn = true;
+
+      Serial.print("\n-----> Start Timer");
+    }
+    
+
     if(DEBUG)
     {
       Serial.print("\nSwitch closed");
-    }
-  }
-
-  else if(!digitalRead(PUMP_PIN) && reedContact && (millis()-reedContactTimeClosed >= DEBOUNCE_TIME_REED_ON) && !timerStarted) //reed contac closed for >= DEBOUNCE_TIME
-  {
-    timerStarted = true;
-    timerStartMillis = millis();
-    displayOn = true;
-
-    if(DEBUG)
-    {
-      Serial.print("\nStart pump");
     }
   }
 
@@ -59,7 +58,9 @@ void detectPumpChanges()
 
     if(DEBUG)
     {
-      Serial.print("\nStop pump");
+      Serial.print("\ndebounce time reached, diff: ");
+      Serial.print(millis()-reedContactTimeOpened);
+      Serial.print("\n-----> Stop Timer");
     } 
   }
 
@@ -71,9 +72,9 @@ void detectPumpChanges()
     
 
     if(DEBUG)
-      {
-        Serial.print("\nSleep");
-      } 
+    {
+      Serial.print("\nSleep");
+    } 
   }
 
 }

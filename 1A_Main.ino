@@ -70,7 +70,6 @@ void loop()
   detectPumpChanges();
   detectButtonChanges();
   getMachineInput();
-
   displayHandler();
   
   if(ONLINEMODE && !timerStarted)
