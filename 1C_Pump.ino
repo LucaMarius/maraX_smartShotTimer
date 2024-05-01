@@ -1,54 +1,70 @@
 void detectPumpChanges() 
 {
-  if (!timerStarted && !digitalRead(PUMP_PIN)) {
-    timerStartMillis = millis();
-    timerStarted = true;
-    displayOn = true;
+  if (!digitalRead(PUMP_PIN) && !reedContact) { //reed contac closed
+    reedContact = true;
+    reedContactTimeClosed = millis();
+    
+    if(!timerStarted)
+    {
+      timerStarted = true;
+      timerStartMillis = millis();
+      displayOn = true;
+
+      Serial.print("\n-----> Start Timer");
+    }
+    
 
     if(DEBUG)
     {
-      Serial.print("\nStart pump");
+      Serial.print("\nSwitch closed");
+    }
+  }
+
+  else if(digitalRead(PUMP_PIN) && reedContact) //reed contac opened
+  {
+    reedContact = false;
+    reedContactTimeOpened = millis();
+
+    if(DEBUG)
+    {
+      Serial.print("\nSwitch opened");
     } 
   }
-  if (timerStarted && digitalRead(PUMP_PIN)) {
-    if (timerStopMillis == 0) {
-      timerStopMillis = millis();
-    }
-    if (millis() - timerStopMillis > 500) {
-      timerStarted = false;
-      timerStopMillis = 0;
-      timerDisplayOffMillis = millis();
-      display.invertDisplay(false);
 
-      if(pbStore && shotTime != getTimer()) //if storage button was pressed -> save new shotime to EEPROM
-      {
-        shotTime = getTimer();
-        EEPROM.put(SHOTTIME_ADDR, shotTime);
-        EEPROM.commit();
+  else if(digitalRead(PUMP_PIN) && !reedContact && (millis()-reedContactTimeOpened >= DEBOUNCE_TIME_REED_OFF) && timerStarted) //reed contac opened for >= DEBOUNCE_TIME
+  {
+    timerStarted = false;
 
-        pbStore = false;
-        
-        if(DEBUG)
-        {
-          uint8_t eepromTime=10;
-          EEPROM.get(SHOTTIME_ADDR, eepromTime);
-          Serial.print("\nStored ShotTime: "); 
-          Serial.print(eepromTime);
-        }
-      }
-          
+    timerStopMillis = 0;
+    timerDisplayOffMillis = millis();
+    display.invertDisplay(false);
+
+    if(pbStore && shotTime != getTimer()) //if storage button was pressed -> save new shotime to EEPROM
+    {
+      shotTime = getTimer();
+      EEPROM.put(SHOTTIME_ADDR, shotTime);
+      EEPROM.commit();
+
+      pbStore = false;
+      
       if(DEBUG)
       {
-        Serial.print("\nStop pump");
-      } 
+        uint8_t eepromTime=10;
+        EEPROM.get(SHOTTIME_ADDR, eepromTime);
+        Serial.print("\nStored ShotTime: "); 
+        Serial.print(eepromTime);
+      }
     }
-  } 
-  else 
-  {
-    timerStopMillis = 0;
+
+    if(DEBUG)
+    {
+      Serial.print("\ndebounce time reached, diff: ");
+      Serial.print(millis()-reedContactTimeOpened);
+      Serial.print("\n-----> Stop Timer");
+    } 
   }
-  
-  if (!timerStarted && displayOn && timerDisplayOffMillis >= 0 && (millis() - timerDisplayOffMillis > 1000 * 60 * 60)) {
+
+  if (!machineOn && !timerStarted && displayOn && timerDisplayOffMillis >= 0 && (millis() - timerDisplayOffMillis > SLEEPTIME)) {
     timerDisplayOffMillis = 0;
     timerCount = 0;
     prevTimerCount = 0;
@@ -56,17 +72,12 @@ void detectPumpChanges()
     
 
     if(DEBUG)
-      {
-        Serial.print("\nSleep");
-      } 
+    {
+      Serial.print("\nSleep");
+    } 
   }
- 
-  if(DEBUG)
-  {
-    digitalWrite(LED_BUILTIN, digitalRead(PUMP_PIN));
-  }
-}
 
+}
 
 void detectButtonChanges()
 { 

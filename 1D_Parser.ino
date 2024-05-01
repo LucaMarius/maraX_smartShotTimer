@@ -1,7 +1,7 @@
 void getMachineInput() {
-  while (mySerial.available() ) {
+  while (mySerial.available()>0) {
     
-    serialUpdateMillis = millis();
+    
     rc = mySerial.read();
 
     if (rc != endMarker) {
@@ -14,10 +14,9 @@ void getMachineInput() {
       receivedChars[ndx] = '\0';
       ndx = 0;
       
-      machineOn = true;
       parseMachineData();
 
-      if(DEBUG)
+      if(DEBUG_PARSER)
       {
         Serial.print("\nReceived data: "); 
         Serial.print(receivedChars);
@@ -25,10 +24,11 @@ void getMachineInput() {
     }
   }
 
-  if (millis() - serialUpdateMillis > SERIAL_TIMEOUT) //Serial timeout
+  if (machineOn && (millis() - serialUpdateMillis > SERIAL_TIMEOUT)) //Serial timeout
   {
     serialUpdateMillis = millis();
     machineOn = false;
+    timerDisplayOffMillis = millis();
   }
 }
 
@@ -42,41 +42,47 @@ void parseMachineData()
   //check if received data start with mode "C" (Coffee) or "V" (Vapour)
   if(strlen(tempChars) == MARAX_DATA_STRLEN && (tempChars[0] == 'C' || tempChars[0] == 'V'))
   {
+    serialUpdateMillis = millis();
+    newMachineInput = true;
+    machineOn = true;
+    displayOn = true;
     
+    uint8_t fieldCnt = 0;
+    uint8_t maxFieldCnt = 5;
     strtokIndex = strtok(tempChars, ",");
 
-    while(strtokIndex != NULL)
+    while(strtokIndex != NULL && fieldCnt<=maxFieldCnt)
     {
-      strcpy(swVer, strtokIndex); 
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(actSteamTemp, strtokIndex); 
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(tarSteamTemp, strtokIndex);
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(actHeatExcTemp, strtokIndex); 
-
-      strtokIndex = strtok(NULL, ",");
-      strcpy(boostHeatTime, strtokIndex); 
-
+      strcpy(field[fieldCnt], strtokIndex);
       strtokIndex = strtok(NULL, ",");
 
-      if(!strncmp(strtokIndex, "1", 1))
+      fieldCnt++;
+    }
+
+    if(fieldCnt == 6)
+    {
+      strcpy(firstToken, field[0]); //store first token which contains priority mode and sw version
+      priorityMode = firstToken[0]; 
+      strncpy(swVer, &firstToken[0]+1, 4);
+
+      strcpy(actSteamTemp, field[1]); 
+      strcpy(tarSteamTemp, field[2]);
+      strcpy(actHeatExcTemp, field[3]); 
+      strcpy(boostHeatTime, field[4]); 
+
+      if(!strncmp(field[5], "1", 1))
       {
         heatElem = true;
       }
       else heatElem = false;
 
-      strtokIndex = strtok(NULL, ","); //should return NULL
     }
 
-    newMachineInput = true;
-
-    if(DEBUG)
+    if(DEBUG_PARSER && false)
     {
       Serial.print("\nParsed data:   ");
+      Serial.print(priorityMode);
+      Serial.print("");
       Serial.print(swVer);
       Serial.print(",");
       Serial.print(actSteamTemp);

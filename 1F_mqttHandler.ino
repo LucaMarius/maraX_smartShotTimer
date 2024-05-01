@@ -28,11 +28,6 @@ void sendMQTTMsg()
       mqttMsgCycle = MQTT_DEFAULT_CYCLE;
       client.publish(will_topic, "online", true);
       client.publish(online_topic, "off", true);
-      client.publish(actSteam_topic, "---", true);
-      client.publish(tarSteam_topic, "---", true);
-      client.publish(actHeatExc_topic, "---", true);
-      client.publish(boostHeat_topic, "---", true);
-      client.publish(heatElem_topic, "---", true);
     }
     oldMsgTime = millis();
   }
@@ -42,6 +37,7 @@ void sendMQTTMsg()
 void reconnectMQTT()
 {
   Serial.print("\nAttempting MQTT connection ..."); 
+
   
   if(client.connect(CLIENT, MQTT_USER, MQTT_PASSWORD, will_topic, 0, true, "offline"))
   {

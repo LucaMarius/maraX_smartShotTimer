@@ -52,43 +52,34 @@ void setup() {
   pinMode(PUMP_PIN, INPUT_PULLUP);
   pinMode(PB_PIN, INPUT_PULLUP);
 
-  
-
   memset(receivedChars, 0, numChars );
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.setTextColor(WHITE);
   display.display();
-
   displayMode(ONLINEMODE);
-  t.every(100, updateDisplay);
   
   mySerial.write(0x11);
+  // Interval in microsecs
+  //ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler);
 }
 
-uint32_t startTimet = 0;
-
-void loop() {
-  t.update();
-  
+void loop() 
+{
   detectPumpChanges();
   detectButtonChanges();
-
-  if(millis()-startTimet >= 1000)
-  {
-    getMachineInput();
-    startTimet = millis();
-  }
+  getMachineInput();
+  displayHandler();
   
-
-  if(ONLINEMODE)
+  if(ONLINEMODE && !timerStarted)
   {
     wifiHandler();
+
     if(WiFi.status() == WL_CONNECTED && MQTTMODE)
     {
       sendMQTTMsg(); 
+      client.loop();
     } 
   }
-
 }
